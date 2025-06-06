@@ -48,22 +48,23 @@ def interpret_shap_fixed(shap_values, feature_names, sample_vector, top_n=5):
 st.title("🛡️ TrustIQ: Fake Review Detector")
 st.markdown("Check if a product review is genuine or fake using AI and NLP.\nPaste your review below and hit Analyze.")
 
-with st.expander("ℹ️ How does TrustIQ work?"):
-    st.markdown("""
-    **TrustIQ** uses Natural Language Processing (NLP) and Machine Learning to classify product reviews as *Fake* or *Genuine*.
-
-    - It cleans your review (removing stopwords, punctuation, etc.)
-    - Converts it into numeric features using **TF-IDF vectorization**
-    - Feeds it into a pre-trained **XGBoost classifier**
-    - Interprets the prediction using **SHAP** to highlight important words
-
-    This makes predictions **fast**, **transparent**, and **explainable**.
-    """)
-
 user_input = st.text_area("Paste a product review to check if it's fake:")
 
-# Use native Streamlit button (centered using columns)
-col1, col2, col3 = st.columns([1, 1, 1])
+# Row with expander and button side-by-side
+col1, col2 = st.columns([4, 1])
+with col1:
+    with st.expander("ℹ️ How does TrustIQ work?"):
+        st.markdown("""
+        **TrustIQ** uses Natural Language Processing (NLP) and Machine Learning to classify product reviews as *Fake* or *Genuine*.
+
+        - It cleans your review (removing stopwords, punctuation, etc.)
+        - Converts it into numeric features using **TF-IDF vectorization**
+        - Feeds it into a pre-trained **XGBoost classifier**
+        - Interprets the prediction using **SHAP** to highlight important words
+
+        This makes predictions **fast**, **transparent**, and **explainable**.
+        """)
+
 with col2:
     analyze_clicked = st.button("Analyze")
 
