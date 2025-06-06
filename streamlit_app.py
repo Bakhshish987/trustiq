@@ -48,8 +48,6 @@ def interpret_shap_fixed(shap_values, feature_names, sample_vector, top_n=5):
 st.title("🛡️ TrustIQ: Fake Review Detector")
 st.markdown("Check if a product review is genuine or fake using AI and NLP.\nPaste your review below and hit Analyze.")
 
-user_input = st.text_area("Paste a product review to check if it's fake:")
-
 with st.expander("ℹ️ How does TrustIQ work?"):
     st.markdown("""
     **TrustIQ** uses Natural Language Processing (NLP) and Machine Learning to classify product reviews as *Fake* or *Genuine*.
@@ -61,6 +59,8 @@ with st.expander("ℹ️ How does TrustIQ work?"):
 
     This makes predictions **fast**, **transparent**, and **explainable**.
     """)
+
+user_input = st.text_area("Paste a product review to check if it's fake:")
 
 analyze_clicked = st.button("Analyze")
 
