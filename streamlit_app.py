@@ -62,7 +62,11 @@ with st.expander("ℹ️ How does TrustIQ work?"):
 
 user_input = st.text_area("Paste a product review to check if it's fake:")
 
-if st.button("Analyze"):
+col1, col2, col3 = st.columns([1, 2, 1])
+with col2:
+    analyze_clicked = st.button("Analyze")
+
+if analyze_clicked:
     if not user_input.strip():
         st.warning("Please enter a review first.")
     else:
@@ -72,7 +76,7 @@ if st.button("Analyze"):
 
         # Predict
         pred = model.predict(vec)[0]
-        proba = model.predict_proba(vec)[0][pred]
+        proba = float(model.predict_proba(vec)[0][pred])
         label = "❌ FAKE REVIEW" if pred == 1 else "✅ GENUINE REVIEW"
 
         # SHAP Explainability
@@ -92,4 +96,5 @@ if st.button("Analyze"):
 # === Footer ===
 st.markdown("---")
 st.markdown("Built with ❤️ by **Bakhshish Sethi**")
+
 
