@@ -75,7 +75,9 @@ if st.button("Analyze"):
         st.markdown(explanation)
 
         # Visual confidence bar
-        st.progress(proba if pred == 1 else 1 - proba)
+        progress_val = float(proba if pred == 1 else 1 - proba)
+        st.progress(progress_val)
+
 
         # Optional matplotlib chart (static)
         fig, ax = plt.subplots()
