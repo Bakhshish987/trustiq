@@ -93,8 +93,3 @@ if st.button("Analyze"):
 st.markdown("---")
 st.markdown("Built with ❤️ by **Bakhshish Sethi**")
 
-
-# === Footer ===
-st.markdown("---")
-st.markdown("Built with ❤️ by **Bakhshish Sethi**")
-
