@@ -63,7 +63,7 @@ with st.expander("ℹ️ How does TrustIQ work?"):
 user_input = st.text_area("Paste a product review to check if it's fake:")
 
 # Use native Streamlit button (centered using columns)
-col1, col2, col3 = st.columns([1, 2, 1])
+col1, col2, col3 = st.columns([1, 1, 1])
 with col2:
     analyze_clicked = st.button("Analyze")
 
