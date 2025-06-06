@@ -50,23 +50,19 @@ st.markdown("Check if a product review is genuine or fake using AI and NLP.\nPas
 
 user_input = st.text_area("Paste a product review to check if it's fake:")
 
-# Row with expander and button side-by-side
-col1, col2 = st.columns([4, 1])
-with col1:
-    with st.expander("ℹ️ How does TrustIQ work?"):
-        st.markdown("""
-        **TrustIQ** uses Natural Language Processing (NLP) and Machine Learning to classify product reviews as *Fake* or *Genuine*.
+with st.expander("ℹ️ How does TrustIQ work?"):
+    st.markdown("""
+    **TrustIQ** uses Natural Language Processing (NLP) and Machine Learning to classify product reviews as *Fake* or *Genuine*.
 
-        - It cleans your review (removing stopwords, punctuation, etc.)
-        - Converts it into numeric features using **TF-IDF vectorization**
-        - Feeds it into a pre-trained **XGBoost classifier**
-        - Interprets the prediction using **SHAP** to highlight important words
+    - It cleans your review (removing stopwords, punctuation, etc.)
+    - Converts it into numeric features using **TF-IDF vectorization**
+    - Feeds it into a pre-trained **XGBoost classifier**
+    - Interprets the prediction using **SHAP** to highlight important words
 
-        This makes predictions **fast**, **transparent**, and **explainable**.
-        """)
+    This makes predictions **fast**, **transparent**, and **explainable**.
+    """)
 
-with col2:
-    analyze_clicked = st.button("Analyze")
+analyze_clicked = st.button("Analyze")
 
 if analyze_clicked:
     if not user_input.strip():
@@ -98,6 +94,7 @@ if analyze_clicked:
 # === Footer ===
 st.markdown("---")
 st.markdown("Built with ❤️ by **Bakhshish Sethi**")
+
 
 
 
