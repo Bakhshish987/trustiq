@@ -1,7 +1,25 @@
+# ---- Streamlit App ----
 import streamlit as st
 import pandas as pd
 import joblib
 import shap
+import os
+
+# nltk preprocessing
+import nltk
+import re
+import string
+from nltk.corpus import stopwords
+
+# 🚨 Download stopwords once if not already there
+nltk_data_dir = os.path.expanduser('~') + '/nltk_data'
+if not os.path.exists(nltk_data_dir + '/corpora/stopwords'):
+    nltk.download('stopwords', download_dir=nltk_data_dir)
+
+# Set NLTK path manually to avoid error
+nltk.data.path.append(nltk_data_dir)
+stop_words = set(stopwords.words('english'))
+
 
 # Load model and vectorizer
 model = joblib.load("xgb_model.joblib")
