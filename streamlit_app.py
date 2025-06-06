@@ -62,39 +62,63 @@ with st.expander("ℹ️ How does TrustIQ work?"):
 
 user_input = st.text_area("Paste a product review to check if it's fake:")
 
-col1, col2, col3 = st.columns([1, 2, 1])
-with col2:
-    analyze_clicked = st.button("Analyze")
+# Custom styled analyze button (centered with hover effect)
+analyze_clicked = st.markdown("""
+    <style>
+        .analyze-btn {
+            background-color: red;
+            color: white;
+            font-size: 1.1em;
+            padding: 0.6em 2em;
+            border: 2px solid red;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .analyze-btn:hover {
+            background-color: transparent;
+            color: red;
+        }
+    </style>
+    <div style='text-align: center;'>
+        <form action="" method="post">
+            <input class="analyze-btn" type="submit" value="Analyze">
+        </form>
+    </div>
+""", unsafe_allow_html=True)
 
-if analyze_clicked:
-    if not user_input.strip():
-        st.warning("Please enter a review first.")
+# Detect button click using workaround
+triggered = st.session_state.get("_BUTTON_CLICKED") if "_BUTTON_CLICKED" in st.session_state else False
+if user_input.strip():
+    st.session_state["_BUTTON_CLICKED"] = True
+
+if st.session_state.get("_BUTTON_CLICKED"):
+    cleaned = clean_text(user_input)
+    vec = vectorizer.transform([cleaned])
+    vec_array = vec.toarray()
+
+    # Predict
+    pred = model.predict(vec)[0]
+    proba = float(model.predict_proba(vec)[0][pred])
+    label = "❌ FAKE REVIEW" if pred == 1 else "✅ GENUINE REVIEW"
+
+    # SHAP Explainability
+    shap_vals = explainer.shap_values(vec_array)
+    explanation = interpret_shap_fixed(shap_vals[0], vectorizer.get_feature_names_out(), vec_array[0])
+
+    # Stylized badge output
+    if pred == 1:
+        st.markdown(f"<h3 style='color:red'>❌ FAKE REVIEW – {proba*100:.2f}% confident</h3>", unsafe_allow_html=True)
     else:
-        cleaned = clean_text(user_input)
-        vec = vectorizer.transform([cleaned])
-        vec_array = vec.toarray()
+        st.markdown(f"<h3 style='color:green'>✅ GENUINE REVIEW – {proba*100:.2f}% confident</h3>", unsafe_allow_html=True)
 
-        # Predict
-        pred = model.predict(vec)[0]
-        proba = float(model.predict_proba(vec)[0][pred])
-        label = "❌ FAKE REVIEW" if pred == 1 else "✅ GENUINE REVIEW"
-
-        # SHAP Explainability
-        shap_vals = explainer.shap_values(vec_array)
-        explanation = interpret_shap_fixed(shap_vals[0], vectorizer.get_feature_names_out(), vec_array[0])
-
-        # Stylized badge output
-        if pred == 1:
-            st.markdown(f"<h3 style='color:red'>❌ FAKE REVIEW – {proba*100:.2f}% confident</h3>", unsafe_allow_html=True)
-        else:
-            st.markdown(f"<h3 style='color:green'>✅ GENUINE REVIEW – {proba*100:.2f}% confident</h3>", unsafe_allow_html=True)
-
-        # SHAP explanation section
-        with st.expander("🔍 See why this review was classified this way"):
-            st.markdown(explanation)
+    # SHAP explanation section
+    with st.expander("🔍 See why this review was classified this way"):
+        st.markdown(explanation)
 
 # === Footer ===
 st.markdown("---")
 st.markdown("Built with ❤️ by **Bakhshish Sethi**")
+
 
 
