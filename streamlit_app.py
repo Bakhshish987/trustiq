@@ -3,8 +3,6 @@ import pandas as pd
 import joblib
 import shap
 import os
-import matplotlib.pyplot as plt
-import seaborn as sns
 
 # === Page Config ===
 st.set_page_config(page_title="TrustIQ - Fake Review Detector", page_icon="🛡️", layout="centered")
@@ -43,12 +41,24 @@ def interpret_shap_fixed(shap_values, feature_names, sample_vector, top_n=5):
     for word, contrib in sorted_features:
         emoji = "🔴" if contrib > 0 else "🔹"
         direction = "positively" if contrib > 0 else "negatively"
-        output.append(f"{emoji} **'{word}'** contributed {direction} ({contrib:.2f})")
+        output.append(f"- {emoji} **'{word}'** contributed {direction} ({contrib:.2f})")
     return "\n".join(output)
 
 # === UI ===
 st.title("🛡️ TrustIQ: Fake Review Detector")
 st.markdown("Check if a product review is genuine or fake using AI and NLP.\nPaste your review below and hit Analyze.")
+
+with st.expander("ℹ️ How does TrustIQ work?"):
+    st.markdown("""
+    **TrustIQ** uses Natural Language Processing (NLP) and Machine Learning to classify product reviews as *Fake* or *Genuine*.
+
+    - It cleans your review (removing stopwords, punctuation, etc.)
+    - Converts it into numeric features using **TF-IDF vectorization**
+    - Feeds it into a pre-trained **XGBoost classifier**
+    - Interprets the prediction using **SHAP** to highlight important words
+
+    This makes predictions **fast**, **transparent**, and **explainable**.
+    """)
 
 user_input = st.text_area("Paste a product review to check if it's fake:")
 
@@ -69,27 +79,20 @@ if st.button("Analyze"):
         shap_vals = explainer.shap_values(vec_array)
         explanation = interpret_shap_fixed(shap_vals[0], vectorizer.get_feature_names_out(), vec_array[0])
 
-        st.markdown(f"### Prediction: {label}")
-        st.markdown(f"**Confidence:** {proba*100:.2f}%")
-        st.markdown("### Explanation:")
-        st.markdown(explanation)
+        # Stylized badge output
+        if pred == 1:
+            st.markdown(f"<h3 style='color:red'>❌ FAKE REVIEW – {proba*100:.2f}% confident</h3>", unsafe_allow_html=True)
+        else:
+            st.markdown(f"<h3 style='color:green'>✅ GENUINE REVIEW – {proba*100:.2f}% confident</h3>", unsafe_allow_html=True)
 
-        # Visual confidence bar
-        progress_val = float(proba if pred == 1 else 1 - proba)
-        st.progress(progress_val)
+        # SHAP explanation section
+        with st.expander("🔍 See why this review was classified this way"):
+            st.markdown(explanation)
 
+# === Footer ===
+st.markdown("---")
+st.markdown("Built with ❤️ by **Bakhshish Sethi**")
 
-        # Optional matplotlib chart (static)
-        fig, ax = plt.subplots()
-        sns.barplot(
-            x=["Fake", "Genuine"],
-            y=model.predict_proba(vec)[0],
-            palette=["red", "green"],
-            ax=ax
-        )
-        ax.set_title("Prediction Confidence")
-        ax.set_ylabel("Probability")
-        st.pyplot(fig)
 
 # === Footer ===
 st.markdown("---")
